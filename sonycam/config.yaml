@@ -1,22 +1,27 @@
 name: sonycam
-version: "0.1.4"
+version: "0.2.0"
 slug: sonycam
 description: Sony camera control (ISO, white balance, live view) as MQTT entities
 url: https://github.com/davidanthoff/ha-sonycam
 arch:
   - amd64
 init: false
-host_network: true
 homeassistant_api: true
 services:
   - mqtt:need
 map:
   - share:ro
 options:
+  camera_ip: ""
+  camera_model: "ILME-FX30"
+  camera_mac: ""
   liveview_interval: 2
   poll_interval: 5
   sdk_url: ""
 schema:
+  camera_ip: str
+  camera_model: str
+  camera_mac: str?
   liveview_interval: int(1,60)
   poll_interval: int(2,60)
   sdk_url: str?

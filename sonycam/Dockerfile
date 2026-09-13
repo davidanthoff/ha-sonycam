@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # sonycam source only - the Sony SDK itself is supplied by the user at runtime
 ARG SONYCAM_REPO=https://github.com/davidanthoff/sonycam
-ARG SONYCAM_REF=fx30-priority-key
+ARG SONYCAM_REF=direct-ip
 RUN git clone --depth 1 -b ${SONYCAM_REF} ${SONYCAM_REPO} /opt/sonycam-src \
     && git -C /opt/sonycam-src rev-parse HEAD > /opt/sonycam-src.rev
 

@@ -12,7 +12,7 @@ SDK_URL=$(bashio::config 'sdk_url')
 
 # ---- MQTT credentials from the Supervisor services API -----------------------
 if bashio::services.available "mqtt"; then
-    export MQTT_HOST=127.0.0.1        # host_network: broker reachable on host
+    export MQTT_HOST=$(bashio::services mqtt "host")
     export MQTT_PORT=$(bashio::services mqtt "port")
     export MQTT_USER=$(bashio::services mqtt "username")
     export MQTT_PASSWORD=$(bashio::services mqtt "password")
@@ -86,6 +86,12 @@ else
 fi
 
 export SONYCAM="${BUILD_DIR}/sonycam"
+export SONYCAM_IP=$(bashio::config 'camera_ip')
+export SONYCAM_MODEL=$(bashio::config 'camera_model')
+export SONYCAM_MAC=$(bashio::config 'camera_mac')
+if [ -z "${SONYCAM_IP}" ]; then
+    fatal "camera_ip option is not set - configure the camera's IP address"
+fi
 export LIVEVIEW_INTERVAL=$(bashio::config 'liveview_interval')
 export POLL_INTERVAL=$(bashio::config 'poll_interval')
 

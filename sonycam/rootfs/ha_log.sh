@@ -15,4 +15,4 @@ curl -s -X POST \
     -H "Authorization: Bearer ${SUPERVISOR_TOKEN}" \
     -H "Content-Type: application/json" \
     -d "${PAYLOAD}" \
-    http://supervisor/core/api/states/sensor.sonycam_addon_log > /dev/null || true
+    http://${SUPERVISOR_HOST:-172.30.32.2}/core/api/states/sensor.sonycam_addon_log > /dev/null || true

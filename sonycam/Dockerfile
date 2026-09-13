@@ -8,8 +8,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # sonycam source only - the Sony SDK itself is supplied by the user at runtime
 ARG SONYCAM_REPO=https://github.com/davidanthoff/sonycam
-ARG SONYCAM_REF=direct-ip
-RUN git clone --depth 1 -b ${SONYCAM_REF} ${SONYCAM_REPO} /opt/sonycam-src \
+ARG SONYCAM_COMMIT=e72b000b6b77fec17a78525abc5f75a227bbb163
+RUN git clone ${SONYCAM_REPO} /opt/sonycam-src \
+    && git -C /opt/sonycam-src checkout ${SONYCAM_COMMIT} \
     && git -C /opt/sonycam-src rev-parse HEAD > /opt/sonycam-src.rev
 
 COPY rootfs/ /

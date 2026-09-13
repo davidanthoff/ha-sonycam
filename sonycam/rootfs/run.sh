@@ -90,6 +90,8 @@ export SONYCAM="${BUILD_DIR}/sonycam"
 export SONYCAM_IP=$(bashio::config 'camera_ip')
 export SONYCAM_MODEL=$(bashio::config 'camera_model')
 export SONYCAM_MAC=$(bashio::config 'camera_mac')
+export SONYCAM_USER=$(bashio::config 'camera_user')
+export SONYCAM_PASS=$(bashio::config 'camera_password')
 if [ -z "${SONYCAM_IP}" ]; then
     fatal "camera_ip option is not set - configure the camera's IP address"
 fi

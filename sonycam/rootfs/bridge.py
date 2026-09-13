@@ -42,6 +42,7 @@ def run_sonycam(args, timeout=60, binary_output=False):
 
 class Bridge:
     def __init__(self):
+        self.wb_point = {"x": 0.5, "y": 0.5}
         self.desired_connected = False
         self.connected = False
         self.model = ""
@@ -101,6 +102,18 @@ class Bridge:
             "command_topic": BASE + "/wb_capture/set",
             "icon": "mdi:eyedropper",
         })
+        for axis in ("x", "y"):
+            self.disc("number", "wb_point_" + axis, {
+                "name": "WB capture point " + axis.upper(),
+                "command_topic": BASE + "/wb_point_" + axis + "/set",
+                "state_topic": BASE + "/wb_point_" + axis + "/state",
+                "min": 0, "max": 1, "step": 0.01,
+                "mode": "box",
+                "entity_category": "config",
+                "icon": "mdi:crosshairs",
+            })
+            self.client.publish(BASE + "/wb_point_" + axis + "/state",
+                                "0.5", retain=True)
         self.disc("number", "color_temp", {
             "name": "Color temperature",
             "command_topic": BASE + "/color_temp/set",
@@ -133,8 +146,18 @@ class Bridge:
                 value = payload.split(".")[0] + "K"
                 run_sonycam(["set", "color_temp", value])
                 self.publish_props()
+            elif entity in ("wb_point_x", "wb_point_y"):
+                axis = entity[-1]
+                try:
+                    self.wb_point[axis] = min(1.0, max(0.0, float(payload)))
+                except ValueError:
+                    pass
+                self.client.publish(BASE + "/" + entity + "/state",
+                                    str(self.wb_point[axis]), retain=True)
             elif entity == "wb_capture":
-                res = run_sonycam(["wb", "capture"], timeout=60)
+                res = run_sonycam(["wb", "capture",
+                                   str(self.wb_point["x"]),
+                                   str(self.wb_point["y"])], timeout=60)
                 msg = "custom WB captured" if res.get("ok") else                     "WB capture failed: " + str(res.get("error", ""))[:150]
                 self.client.publish("sonycam/fx30/log/state", msg, retain=True)
                 self.publish_props()

@@ -3,6 +3,19 @@ DEBUG_LOG_URL=$(python3 -c "import json;print(json.load(open('/data/options.json
 export DEBUG_LOG_URL
 # Plain-bash wrapper: run the real entrypoint, then post its tail output to an
 # HA sensor via the Supervisor core API - even if run.sh dies instantly.
+# --- diagnostic: report token presence and supervisor API reachability ---
+DIAG_TOK="tok_len=${#SUPERVISOR_TOKEN}"
+DIAG_INFO=$(curl -s -m 5 -o /tmp/diag_info.json -w "%{http_code}"     -H "Authorization: Bearer ${SUPERVISOR_TOKEN}" http://supervisor/addons/self/info)
+DIAG_BODY=$(head -c 120 /tmp/diag_info.json)
+if [ -n "${DEBUG_LOG_URL}" ]; then
+    DPAYLOAD=$(python3 - "${DIAG_TOK} info_http=${DIAG_INFO} body=${DIAG_BODY}" << 'PYEOF2'
+import json, sys
+print(json.dumps({"msg": sys.argv[1][:250]}))
+PYEOF2
+)
+    curl -s -m 5 -X POST -H "Content-Type: application/json" -d "${DPAYLOAD}" "${DEBUG_LOG_URL}" > /dev/null
+fi
+
 /run.sh > /tmp/addon.log 2>&1
 CODE=$?
 TAIL=$(tail -c 240 /tmp/addon.log)

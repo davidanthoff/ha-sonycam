@@ -1,5 +1,5 @@
 name: sonycam
-version: "0.2.1"
+version: "0.2.2"
 slug: sonycam
 description: Sony camera control (ISO, white balance, live view) as MQTT entities
 url: https://github.com/davidanthoff/ha-sonycam

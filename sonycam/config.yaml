@@ -1,0 +1,21 @@
+name: sonycam
+version: "0.1.0"
+slug: sonycam
+description: Sony camera control (ISO, white balance, live view) as MQTT entities
+url: https://github.com/davidanthoff/ha-sonycam
+arch:
+  - amd64
+init: false
+host_network: true
+services:
+  - mqtt:need
+map:
+  - share:ro
+options:
+  liveview_interval: 2
+  poll_interval: 5
+  sdk_url: ""
+schema:
+  liveview_interval: int(1,60)
+  poll_interval: int(2,60)
+  sdk_url: str?

@@ -1,0 +1,18 @@
+ARG BUILD_FROM
+FROM ${BUILD_FROM}
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        build-essential cmake git unzip curl ca-certificates \
+        python3 python3-paho-mqtt \
+    && rm -rf /var/lib/apt/lists/*
+
+# sonycam source only - the Sony SDK itself is supplied by the user at runtime
+ARG SONYCAM_REPO=https://github.com/davidanthoff/sonycam
+ARG SONYCAM_REF=fx30-priority-key
+RUN git clone --depth 1 -b ${SONYCAM_REF} ${SONYCAM_REPO} /opt/sonycam-src \
+    && git -C /opt/sonycam-src rev-parse HEAD > /opt/sonycam-src.rev
+
+COPY rootfs/ /
+RUN chmod a+x /run.sh
+
+CMD [ "/run.sh" ]

@@ -16,4 +16,4 @@ COPY rootfs/ /
 RUN chmod a+x /run.sh
 
 RUN chmod a+x /wrapper.sh
-CMD [ "/bin/bash", "/wrapper.sh" ]
+CMD [ "/command/with-contenv", "bash", "/wrapper.sh" ]

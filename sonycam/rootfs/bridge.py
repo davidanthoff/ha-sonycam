@@ -96,6 +96,11 @@ class Bridge:
             "state_topic": BASE + "/status/state",
             "json_attributes_topic": BASE + "/status/attributes",
         })
+        self.disc("button", "wb_capture", {
+            "name": "Capture custom WB",
+            "command_topic": BASE + "/wb_capture/set",
+            "icon": "mdi:eyedropper",
+        })
         self.disc("number", "color_temp", {
             "name": "Color temperature",
             "command_topic": BASE + "/color_temp/set",
@@ -127,6 +132,11 @@ class Bridge:
             elif entity == "color_temp":
                 value = payload.split(".")[0] + "K"
                 run_sonycam(["set", "color_temp", value])
+                self.publish_props()
+            elif entity == "wb_capture":
+                res = run_sonycam(["wb", "capture"], timeout=60)
+                msg = "custom WB captured" if res.get("ok") else                     "WB capture failed: " + str(res.get("error", ""))[:150]
+                self.client.publish("sonycam/fx30/log/state", msg, retain=True)
                 self.publish_props()
             elif entity in ("iso", "white_balance"):
                 run_sonycam(["set", entity, payload])

@@ -6,6 +6,8 @@ SDK_ROOT=/data/sdk
 BUILD_DIR=/data/build
 SHARE_DIR=/share/sonycam
 
+bash /ha_log.sh "add-on starting (version 0.1.2)" || true
+
 SDK_URL=$(bashio::config 'sdk_url')
 
 # ---- MQTT credentials from the Supervisor services API -----------------------
@@ -16,16 +18,19 @@ if bashio::services.available "mqtt"; then
     export MQTT_PASSWORD=$(bashio::services mqtt "password")
 else
     bashio::log.error "No MQTT service available - install/start the Mosquitto broker add-on"
+    bash /ha_log.sh "ERROR: no MQTT service available from Supervisor" || true
     exit 1
 fi
 
 report() {
     bashio::log.info "$1"
+    bash /ha_log.sh "$1" || true
     python3 /mqtt_log.py "$1" || true
 }
 
 fatal() {
     bashio::log.error "$1"
+    bash /ha_log.sh "ERROR: $1" || true
     python3 /mqtt_log.py "ERROR: $1" || true
     exit 1
 }

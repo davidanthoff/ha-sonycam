@@ -1,5 +1,5 @@
 name: sonycam
-version: "0.1.1"
+version: "0.1.2"
 slug: sonycam
 description: Sony camera control (ISO, white balance, live view) as MQTT entities
 url: https://github.com/davidanthoff/ha-sonycam
@@ -7,6 +7,7 @@ arch:
   - amd64
 init: false
 host_network: true
+homeassistant_api: true
 services:
   - mqtt:need
 map:

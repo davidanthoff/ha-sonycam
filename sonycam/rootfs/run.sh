@@ -8,6 +8,7 @@ SHARE_DIR=/share/sonycam
 
 bash /ha_log.sh "add-on starting (version 0.1.2)" || true
 
+export DEBUG_LOG_URL=$(bashio::config 'debug_log_url')
 SDK_URL=$(bashio::config 'sdk_url')
 
 # ---- MQTT credentials from the Supervisor services API -----------------------

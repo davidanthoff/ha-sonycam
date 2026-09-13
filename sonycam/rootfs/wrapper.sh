@@ -1,4 +1,6 @@
 #!/bin/bash
+DEBUG_LOG_URL=$(python3 -c "import json;print(json.load(open('/data/options.json')).get('debug_log_url',''))" 2>/dev/null)
+export DEBUG_LOG_URL
 # Plain-bash wrapper: run the real entrypoint, then post its tail output to an
 # HA sensor via the Supervisor core API - even if run.sh dies instantly.
 /run.sh > /tmp/addon.log 2>&1
@@ -18,6 +20,14 @@ curl -s -X POST \
     -H "Content-Type: application/json" \
     -d "${PAYLOAD}" \
     http://${SUPERVISOR_HOST:-172.30.32.2}/core/api/states/sensor.sonycam_addon_log
+if [ -n "${DEBUG_LOG_URL}" ]; then
+    WPAYLOAD=$(python3 - "$CODE" "$TAIL" << 'PYEOF2'
+import json, sys
+print(json.dumps({"msg": ("exit " + sys.argv[1] + ": " + sys.argv[2])[:250]}))
+PYEOF2
+)
+    curl -s -m 5 -X POST -H "Content-Type: application/json"         -d "${WPAYLOAD}" "${DEBUG_LOG_URL}" > /dev/null
+fi
 if [ ${CODE} -ne 0 ]; then
     sleep 20
     exit ${CODE}

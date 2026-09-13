@@ -15,4 +15,5 @@ RUN git clone --depth 1 -b ${SONYCAM_REF} ${SONYCAM_REPO} /opt/sonycam-src \
 COPY rootfs/ /
 RUN chmod a+x /run.sh
 
-CMD [ "/run.sh" ]
+RUN chmod a+x /wrapper.sh
+CMD [ "/bin/bash", "/wrapper.sh" ]
